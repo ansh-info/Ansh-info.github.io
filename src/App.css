@@ -1,0 +1,7 @@
+#root {
+  width: 100%;
+  margin: 0 auto;
+  /* Remove or adjust the max-width */
+  /* max-width: 1280px; */
+  padding: 2rem;
+}
