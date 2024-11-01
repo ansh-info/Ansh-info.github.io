@@ -173,22 +173,22 @@ const DockerDashboard = () => {
             <Container className="w-8 h-8 text-blue-400 group-hover:text-blue-300" />
             <div className="flex items-center gap-2">
               <span className="text-green-400 font-mono text-sm">$</span>
-              <span className="text-gray-400 font-mono text-sm">docker-cli</span>
+              <span className="text-gray-400 font-mono text-sm">Docker</span>
             </div>
           </div>
         </button>
         
-        <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[150px] 
+        <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[300px] 
           truncate border border-gray-700/50 flex items-center gap-2"
         >
           <span className="text-green-400">$</span>
-          <span className="text-gray-400">click to start</span>
+          <span className="text-gray-400">docker pull - click to start</span>
         </div>
       </div>
 
       {/* Docker Dashboard */}
       {isOpen && (
-        <div className="fixed top-[300px] right-[620px] w-[600px] bg-gray-800 rounded-lg shadow-2xl z-40 
+        <div className="fixed top-[300px] right-[600px] w-[900px] h-[650px] bg-gray-800 rounded-lg shadow-2xl z-40 
           border border-gray-700 transform transition-all duration-200"
         >
           {/* Header */}
