@@ -94,7 +94,7 @@ class CoffeePredictor:
             <Code className="w-8 h-8 text-blue-400 group-hover:text-blue-300" />
             <div className="flex items-center gap-2">
               <span className="text-green-400 font-mono text-sm">$</span>
-              <span className="text-gray-400 font-mono text-sm">code</span>
+              <span className="text-gray-400 font-mono text-sm">VScode</span>
             </div>
           </div>
         </button>
@@ -103,13 +103,13 @@ class CoffeePredictor:
           truncate border border-gray-700/50 flex items-center gap-2"
         >
           <span className="text-green-400">$</span>
-          <span className="text-gray-400">editor</span>
+          <span className="text-gray-400">code .</span>
         </div>
       </div>
 
       {/* VS Code Interface */}
       {isOpen && (
-        <div className="fixed top-[300px] right-[620px] w-[900px] h-[600px] bg-gray-900 rounded-lg shadow-2xl z-40 
+        <div className="fixed top-[300px] right-[560px] w-[1000px] h-[800px] bg-gray-900 rounded-lg shadow-2xl z-40 
           border border-gray-700 flex overflow-hidden"
         >
           {/* Activity Bar */}

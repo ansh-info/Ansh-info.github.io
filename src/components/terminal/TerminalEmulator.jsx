@@ -187,14 +187,14 @@ Type 'help' for available commands`;
         </button>
         
         {/* Always visible mini preview */}
-        <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono text-green-400/70 max-w-[150px] truncate border border-gray-700/50">
-          $ {isOpen ? 'terminal active' : 'click to start'}
+        <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono text-green-400/70 max-w-[300px] truncate border border-gray-700/50">
+          $ {isOpen ? 'terminal active' : 'vim main.py - click to start'}
         </div>
       </div>
 
       {/* Terminal Window */}
       {isOpen && (
-        <div className="fixed top-[300px] right-[620px] w-[600px] bg-gray-800 rounded-lg shadow-2xl z-40 border border-gray-700">
+        <div className="fixed top-[300px] right-[620px] w-[900px] bg-gray-800 rounded-lg shadow-2xl z-40 border border-gray-700">
           {/* Terminal Header */}
           <div className="flex items-center justify-between p-2 border-b border-gray-700">
             <div className="flex items-center gap-2">
