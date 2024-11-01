@@ -82,22 +82,22 @@ const JupyterNotebook = () => {
             <FileCode className="w-8 h-8 text-orange-400 group-hover:text-orange-300" />
             <div className="flex items-center gap-2">
               <span className="text-green-400 font-mono text-sm">$</span>
-              <span className="text-gray-400 font-mono text-sm">jupyter</span>
+              <span className="text-gray-400 font-mono text-sm">Jupyter Notebook</span>
             </div>
           </div>
         </button>
         
-        <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[150px] 
+        <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[300px] 
           truncate border border-gray-700/50 flex items-center gap-2"
         >
           <span className="text-green-400">$</span>
-          <span className="text-gray-400">notebook</span>
+          <span className="text-gray-400">Run All Cells</span>
         </div>
       </div>
 
       {/* Jupyter Notebook Interface */}
       {isOpen && (
-        <div className="fixed top-[300px] right-[620px] w-[800px] bg-gray-800 rounded-lg shadow-2xl z-40 
+        <div className="fixed top-[300px] right-[580px] w-[1000px] h-[650px] bg-gray-800 rounded-lg shadow-2xl z-40 
           border border-gray-700 transform transition-all duration-200"
         >
           {/* Header */}

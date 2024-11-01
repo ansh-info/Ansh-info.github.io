@@ -181,7 +181,7 @@ const NeuralNetworkViz = () => {
   return (
     <>
       {/* Neural Network Button */}
-      <div className="fixed top-[800px] right-4 z-50 flex flex-col items-end gap-2">
+      <div className="fixed top-[1000px] right-4 z-50 flex flex-col items-end gap-2">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="group bg-gray-800/90 p-4 rounded-xl hover:bg-gray-700 transition-all duration-200 
@@ -191,22 +191,22 @@ const NeuralNetworkViz = () => {
             <Brain className="w-8 h-8 text-purple-400 group-hover:text-purple-300" />
             <div className="flex items-center gap-2">
               <span className="text-green-400 font-mono text-sm">$</span>
-              <span className="text-gray-400 font-mono text-sm">neural</span>
+              <span className="text-gray-400 font-mono text-sm">NeuralNetwork</span>
             </div>
           </div>
         </button>
         
-        <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[150px] 
+        <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[300px] 
           truncate border border-gray-700/50 flex items-center gap-2"
         >
           <span className="text-green-400">$</span>
-          <span className="text-gray-400">visualizer</span>
+          <span className="text-gray-400">128 hidden layers</span>
         </div>
       </div>
 
       {/* Neural Network Visualizer */}
       {isOpen && (
-        <div className="fixed top-[300px] right-[620px] w-[800px] bg-gray-800 rounded-lg shadow-2xl z-40 
+        <div className="fixed top-[300px] right-[650px] w-[850px] h-[900px] bg-gray-800 rounded-lg shadow-2xl z-40 
           border border-gray-700 flex flex-col overflow-hidden"
         >
           {/* Header */}
