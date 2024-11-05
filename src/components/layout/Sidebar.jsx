@@ -63,11 +63,28 @@ const Sidebar = () => {
     { id: 'social', icon: <Globe className="w-5 h-5" />, label: 'Connect' }
   ];
 
+  
+// Add useEffect to handle initial state based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) { // lg breakpoint
+        setIsOpen(false);
+      }
+    };
+
+    // Set initial state
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <div 
       className={`fixed left-0 top-0 h-full bg-gray-800/90 backdrop-blur-sm z-40 transition-all duration-300 
         border-r border-gray-700/50 flex flex-col
-        ${isOpen ? 'w-[400px]' : 'w-16'}`}
+        ${isOpen ? 'w-16 md:w-[400px]' : 'w-16'}`}
     >
       {/* Toggle Button */}
       <button
