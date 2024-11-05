@@ -5,3 +5,42 @@
   /* max-width: 1280px; */
   padding: 2rem;
 }
+
+#root {
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Prevent content from being zoomed initially */
+@viewport {
+  width: device-width;
+  zoom: 1.0;
+}
+
+/* Add these meta viewport-related styles */
+@-ms-viewport {
+  width: device-width;
+}
+
+/* Add responsive container classes */
+.container-fluid {
+  width: 100%;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* Add responsive breakpoints */
+@media (max-width: 640px) {
+  #root {
+    padding: 0.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  #root {
+    padding: 2rem;
+  }
+}
