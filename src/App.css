@@ -1,14 +1,6 @@
 #root {
   width: 100%;
   margin: 0 auto;
-  /* Remove or adjust the max-width */
-  /* max-width: 1280px; */
-  padding: 2rem;
-}
-
-#root {
-  width: 100%;
-  margin: 0 auto;
   padding: 1rem;
 }
 
@@ -30,6 +22,35 @@
   padding-left: 1rem;
   margin-right: auto;
   margin-left: auto;
+}
+
+/* Responsive positioning for interactive components */
+@media (max-width: 768px) {
+  /* Adjust right offset for mobile */
+  .fixed.right-4 {
+    right: 0.5rem;
+  }
+  
+  /* Stack interactive components vertically on mobile */
+  .fixed.top-\[200px\] { top: 80px; }
+  .fixed.top-\[400px\] { top: 160px; }
+  .fixed.top-\[600px\] { top: 240px; }
+  .fixed.top-\[800px\] { top: 320px; }
+  .fixed.top-\[1000px\] { top: 400px; }
+
+  /* Adjust modal positions and sizes for mobile */
+  .fixed.right-\[580px\],
+  .fixed.right-\[600px\],
+  .fixed.right-\[620px\],
+  .fixed.right-\[650px\],
+  .fixed.right-\[800px\] {
+    right: 0;
+    left: 0;
+    width: 100%;
+    margin: 0 auto;
+    height: 80vh;
+    top: 10vh;
+  }
 }
 
 /* Add responsive breakpoints */
