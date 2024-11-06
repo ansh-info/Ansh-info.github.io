@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
 import PropTypes from 'prop-types';
 
-const SkillsGraph3D = ({ width = 368, height = 400 }) => {
+const SkillsGraph3D = ({ width = 500, height = 500 }) => {
   const [rotation, setRotation] = useState(0);
 
   const skills = [
@@ -17,12 +17,11 @@ const SkillsGraph3D = ({ width = 368, height = 400 }) => {
   ];
 
   const generateSkillCoordinates = () => {
-    const radius = 2.0; // Increased radius for more spread
-    const verticalSpread = 0.9; // Increased vertical spread
+    const radius = 2.0;
+    const verticalSpread = 0.9;
     
     return skills.map((skill, i) => {
       const angle = (i * 2 * Math.PI) / skills.length + rotation;
-      // Modified distribution to create more space between points
       const heightOffset = Math.sin(rotation * 2 + i * 0.8) * 0.15;
       const verticalPosition = Math.cos(i * Math.PI / 4) * verticalSpread;
       
@@ -37,133 +36,103 @@ const SkillsGraph3D = ({ width = 368, height = 400 }) => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setRotation(prev => prev + 0.02); // Doubled rotation speed
+      setRotation(prev => prev + 0.01);
     }, 50);
     return () => clearInterval(timer);
   }, []);
 
   const coordinates = generateSkillCoordinates();
 
-  // Create grid planes
-  const createGridPlane = (axis1, axis2, fixedAxis, value) => ({
-    type: 'mesh3d',
-    x: axis1 === 'x' ? [-1.8, 1.8, 1.8, -1.8] : // Increased grid size
-       axis1 === 'y' ? [value, value, value, value] : [-1.8, -1.8, 1.8, 1.8],
-    y: axis1 === 'x' ? [value, value, value, value] : 
-       axis1 === 'y' ? [-1.8, 1.8, 1.8, -1.8] : [-1.8, 1.8, 1.8, -1.8],
-    z: axis1 === 'z' ? [-1.8, -1.8, 1.8, 1.8] : 
-       [value, value, value, value],
-    i: [0],
-    j: [1],
-    k: [2],
-    opacity: 0.1,
-    color: '#1E293B',
-    hoverinfo: 'skip'
-  });
-
-  const gridPlanes = [
-    createGridPlane('x', 'y', 'z', -0.6),
-    createGridPlane('x', 'y', 'z', 0),
-    createGridPlane('x', 'y', 'z', 0.6)
-  ];
-
-  const data = [
-    ...gridPlanes,
-    {
-      type: 'scatter3d',
-      mode: 'markers+text',
-      x: coordinates.map(c => c.x),
-      y: coordinates.map(c => c.y),
-      z: coordinates.map(c => c.z),
-      text: coordinates.map(c => c.name),
-      textposition: 'top center',
-      textfont: {
-        size: 12,
-        color: '#E2E8F0'
-      },
-      marker: {
-        size: 14,
-        color: coordinates.map(c => {
-          const colors = {
-            'Programming': '#60A5FA',
-            'Database': '#34D399',
-            'ML': '#F87171',
-            'DevOps': '#A78BFA',
-            'Data': '#FBBF24',
-            'Visualization': '#EC4899'
-          };
-          return colors[c.category];
-        }),
-        symbol: 'circle',
-        opacity: 1,
-        line: {
-          color: 'rgba(255, 255, 255, 0.4)',
-          width: 1.5
-        }
-      },
-      hoverinfo: 'text',
-      hovertext: coordinates.map(c => 
-        `<b>${c.name}</b><br>
-         ${c.category}<br>
-         Proficiency: ${(c.level*100).toFixed(0)}%`
-      )
-    }
-  ];
+  const data = [{
+    type: 'scatter3d',
+    mode: 'markers+text',
+    x: coordinates.map(c => c.x),
+    y: coordinates.map(c => c.y),
+    z: coordinates.map(c => c.z),
+    text: coordinates.map(c => c.name),
+    textposition: 'top center',
+    textfont: {
+      size: 12,
+      color: '#E2E8F0'
+    },
+    marker: {
+      size: 12,
+      color: coordinates.map(c => {
+        const colors = {
+          'Programming': '#60A5FA',
+          'Database': '#34D399',
+          'ML': '#F87171',
+          'DevOps': '#A78BFA',
+          'Data': '#FBBF24',
+          'Visualization': '#EC4899'
+        };
+        return colors[c.category];
+      }),
+      opacity: 0.8,
+      line: {
+        color: '#1F2937',
+        width: 1
+      }
+    },
+    hoverinfo: 'text',
+    hovertext: coordinates.map(c => 
+      `${c.name}\n${c.category}\nProficiency: ${(c.level*100).toFixed(0)}%`
+    )
+  }];
 
   const layout = {
-    paper_bgcolor: 'rgba(17, 24, 39, 0)',
-    plot_bgcolor: 'rgba(17, 24, 39, 0)',
+    paper_bgcolor: 'rgba(11, 15, 25, 0)',
+    plot_bgcolor: 'rgba(11, 15, 25, 0)',
     scene: {
       xaxis: { 
-        showgrid: true,
-        gridcolor: '#1E293B',
-        gridwidth: 1,
-        zeroline: false,
+        showgrid: false, 
+        zeroline: false, 
         showticklabels: false,
-        range: [-1.8, 1.8] // Increased range
+        range: [-2, 2] // Adjusted for better centering
       },
       yaxis: { 
-        showgrid: true,
-        gridcolor: '#1E293B',
-        gridwidth: 1,
-        zeroline: false,
+        showgrid: false, 
+        zeroline: false, 
         showticklabels: false,
-        range: [-1.8, 1.8] // Increased range
+        range: [-2, 2] // Adjusted for better centering
       },
       zaxis: { 
-        showgrid: true,
-        gridcolor: '#1E293B',
-        gridwidth: 1,
-        zeroline: false,
+        showgrid: false, 
+        zeroline: false, 
         showticklabels: false,
-        range: [-0.8, 1.8] // Adjusted range for better vertical distribution
+        range: [-1, 1]
       },
       camera: {
-        eye: { x: 1.8, y: 1.8, z: 1.2 }, // Adjusted camera position
-        center: { x: 0, y: 0, z: 0 }
+        eye: { x: 1.5, y: 1.5, z: 1 },
+        center: { x: 0, y: 0, z: 0 }, // Ensures perfect centering
+        up: { x: 0, y: 0, z: 1 } // Maintains proper orientation
       },
       aspectmode: 'cube',
-      bgcolor: 'rgba(17, 24, 39, 0.5)'
+      bgcolor: 'rgba(11, 15, 25, 0)'
     },
     margin: { l: 0, r: 0, t: 0, b: 0 },
     showlegend: false,
     width,
-    height
+    height,
+    autosize: true
   };
 
   return (
-    <div className="relative">
-      <Plot
-        data={data}
-        layout={layout}
-        config={{ 
-          displayModeBar: false,
-          responsive: true
-        }}
-        className="mx-auto"
-      />
-      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-sm text-gray-400">
-        Interactive 3D View - Drag to rotate
+    <div className="flex justify-center items-center w-full -mt-24">
+      <div className="w-full" style={{ maxWidth: '500px' }}> {/* Fixed width container */}
+        <Plot
+          data={data}
+          layout={layout}
+          config={{ 
+            displayModeBar: false,
+            responsive: true
+          }}
+          style={{ width: '100%', height: '100%' }}
+          useResizeHandler={true}
+        />
+        <div className="text-center text-sm text-gray-400/80 mt-2">
+          Interactive 3D View - Drag to rotate
+        </div>
       </div>
     </div>
   );
