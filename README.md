@@ -2,7 +2,7 @@
 
 A dynamic React-based portfolio featuring interactive developer tools and ML visualizations. Built with a focus on showcasing both technical expertise and creative presentation.
 
-![Portfolio Preview](src/assets/ds.png)
+![Portfolio Preview](src/assets/portfolio.png)
 
 ## 🛠️ Interactive Features
 
@@ -36,7 +36,4 @@ Visit [Ansh Kumar](https://ansh-info.github.io)
 
 ## 📄 License
 
-MIT © [Ansh Kumar]
-
----
-*Built with ☕️ and code*
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
