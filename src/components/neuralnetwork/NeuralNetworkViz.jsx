@@ -9,8 +9,9 @@ import {
   Zap,
 } from 'lucide-react';
 import Plot from 'react-plotly.js';
+import PropTypes from 'prop-types';
 
-const NeuralNetworkViz = () => {
+const NeuralNetworkViz = ({ isMobile = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isTraining, setIsTraining] = useState(false);
   const [epoch, setEpoch] = useState(0);
@@ -180,41 +181,48 @@ const NeuralNetworkViz = () => {
 
   return (
     <>
-      {/* Neural Network Button */}
-      <div className="fixed top-[1000px] right-4 z-50 flex flex-col items-end gap-2">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="group bg-gray-800/90 p-4 rounded-xl hover:bg-gray-700 transition-all duration-200 
-            backdrop-blur-sm border border-gray-700/50 shadow-lg hover:scale-105 cursor-pointer"
-        >
-          <div className="flex items-center gap-3">
-            <Brain className="w-8 h-8 text-purple-400 group-hover:text-purple-300" />
-            <div className="flex items-center gap-2">
-              <span className="text-green-400 font-mono text-sm">$</span>
-              <span className="text-gray-400 font-mono text-sm">NeuralNetwork</span>
+      {/* Neural Network Button - Only show on desktop */}
+      {!isMobile && (
+        <div className="fixed top-[1000px] right-4 z-50 flex flex-col items-end gap-2">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="group bg-gray-800/90 p-4 rounded-xl hover:bg-gray-700 transition-all duration-200 
+              backdrop-blur-sm border border-gray-700/50 shadow-lg hover:scale-105 cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <Brain className="w-8 h-8 text-purple-400 group-hover:text-purple-300" />
+              <div className="flex items-center gap-2">
+                <span className="text-green-400 font-mono text-sm">$</span>
+                <span className="text-gray-400 font-mono text-sm">NeuralNetwork</span>
+              </div>
             </div>
+          </button>
+          
+          <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[300px] 
+            truncate border border-gray-700/50 flex items-center gap-2"
+          >
+            <span className="text-green-400">$</span>
+            <span className="text-gray-400">128 hidden layers</span>
           </div>
-        </button>
-        
-        <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[300px] 
-          truncate border border-gray-700/50 flex items-center gap-2"
-        >
-          <span className="text-green-400">$</span>
-          <span className="text-gray-400">128 hidden layers</span>
         </div>
-      </div>
+      )}
 
       {/* Neural Network Visualizer */}
-      {isOpen && (
-        <div className="fixed top-[300px] right-[650px] w-[850px] h-[900px] bg-gray-800 rounded-lg shadow-2xl z-40 
-          border border-gray-700 flex flex-col overflow-hidden"
+      {(isOpen || isMobile) && (
+        <div className={`${
+          isMobile
+            ? 'fixed inset-0 bg-gray-900/95 z-50 overflow-y-auto'
+            : 'fixed top-[300px] right-[650px] w-[850px] h-[900px] z-40'
+        } bg-gray-800 rounded-lg shadow-2xl border border-gray-700 flex flex-col overflow-hidden`}
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-700">
-            <div className="flex items-center gap-2">
-              <Brain className="w-5 h-5 text-purple-400" />
-              <span className="font-semibold text-white">Neural Network Visualizer</span>
-              <div className="flex items-center gap-2 ml-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <div className="flex items-center gap-2">
+                <Brain className="w-5 h-5 text-purple-400" />
+                <span className="font-semibold text-white">Neural Network Visualizer</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs px-2 py-0.5 bg-blue-400/20 text-blue-400 rounded-full">
                   Epoch: {epoch}
                 </span>
@@ -253,7 +261,7 @@ const NeuralNetworkViz = () => {
                 <RefreshCw className="w-4 h-4 text-white" />
               </button>
               <button 
-                onClick={() => setIsOpen(false)}
+                onClick={() => isMobile ? setIsOpen(false) : setIsOpen(false)}
                 className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
               >
                 <X className="w-4 h-4 text-gray-400" />
@@ -261,12 +269,16 @@ const NeuralNetworkViz = () => {
             </div>
           </div>
 
-          {/* Network Visualization */}
+          {/* Network Visualization - Adjust size for mobile */}
           <div className="p-4">
             {networkData && (
               <Plot
                 data={networkData}
-                layout={layout}
+                layout={{
+                  ...layout,
+                  width: isMobile ? window.innerWidth - 32 : layout.width,
+                  height: isMobile ? 300 : layout.height
+                }}
                 config={{ 
                   displayModeBar: false,
                   responsive: true
@@ -275,7 +287,7 @@ const NeuralNetworkViz = () => {
             )}
           </div>
 
-          {/* Training Metrics */}
+          {/* Training Metrics - Adjust size for mobile */}
           <div className="p-4 border-t border-gray-700">
             <Plot
               data={[
@@ -296,7 +308,11 @@ const NeuralNetworkViz = () => {
                   line: { color: '#F56565' }
                 }
               ]}
-              layout={metricsLayout}
+              layout={{
+                ...metricsLayout,
+                width: isMobile ? window.innerWidth - 32 : metricsLayout.width,
+                height: isMobile ? 200 : metricsLayout.height
+              }}
               config={{ 
                 displayModeBar: false,
                 responsive: true
@@ -304,10 +320,10 @@ const NeuralNetworkViz = () => {
             />
           </div>
 
-          {/* Layer Info */}
+          {/* Layer Info - Scrollable on mobile */}
           <div className="p-4 border-t border-gray-700">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-2">
                 {layers.map((size, index) => (
                   <button
                     key={index}
@@ -332,6 +348,10 @@ const NeuralNetworkViz = () => {
       )}
     </>
   );
+};
+
+NeuralNetworkViz.propTypes = {
+  isMobile: PropTypes.bool
 };
 
 export default NeuralNetworkViz;
