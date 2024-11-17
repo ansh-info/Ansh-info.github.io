@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { Terminal as TerminalIcon, X } from 'lucide-react';
+import PropTypes from 'prop-types';
 
-const TerminalEmulator = () => {
+const TerminalEmulator = ({ isMobile = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [lines, setLines] = useState(['']);
   const [currentLine, setCurrentLine] = useState(0);
   const [mode, setMode] = useState('normal');
   const [cursor, setCursor] = useState(0);
+  const terminalRef = useRef(null);
   // const [history, setHistory] = useState([
   const [history] = useState([
     'vim portfolio.md',
@@ -18,7 +20,7 @@ const TerminalEmulator = () => {
     'cd projects'
   ]);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const terminalRef = useRef(null);
+  // const terminalRef = useRef(null);
 
   // Define available commands
   const commands = {
@@ -174,27 +176,34 @@ Type 'help' for available commands`;
 
   return (
     <>
-      {/* Terminal Toggle Button */}
-      <div className="fixed top-[20px] right-4 z-50 flex flex-col items-end gap-2">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="group bg-gray-800/90 p-4 rounded-xl hover:bg-gray-700 transition-all duration-200 backdrop-blur-sm border border-gray-700/50 shadow-lg hover:scale-105"
-        >
-          <div className="flex items-center gap-3">
-            <TerminalIcon className="w-8 h-8 text-green-400 group-hover:text-green-300" />
-            <span className="text-green-400 font-mono text-sm group-hover:text-green-300">Terminal</span>
+      {/* Terminal Toggle Button - Only show on desktop */}
+      {!isMobile && (
+        <div className="fixed top-[20px] right-4 z-50 flex flex-col items-end gap-2">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="group bg-gray-800/90 p-4 rounded-xl hover:bg-gray-700 transition-all duration-200 
+              backdrop-blur-sm border border-gray-700/50 shadow-lg hover:scale-105"
+          >
+            <div className="flex items-center gap-3">
+              <TerminalIcon className="w-8 h-8 text-green-400 group-hover:text-green-300" />
+              <span className="text-green-400 font-mono text-sm group-hover:text-green-300">Terminal</span>
+            </div>
+          </button>
+          
+          <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono text-green-400/70 
+            max-w-[300px] truncate border border-gray-700/50">
+            $ {isOpen ? 'terminal active' : 'vim main.py - click to start'}
           </div>
-        </button>
-        
-        {/* Always visible mini preview */}
-        <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono text-green-400/70 max-w-[300px] truncate border border-gray-700/50">
-          $ {isOpen ? 'terminal active' : 'vim main.py - click to start'}
         </div>
-      </div>
+      )}
 
       {/* Terminal Window */}
-      {isOpen && (
-        <div className="fixed top-[300px] right-[620px] w-[900px] bg-gray-800 rounded-lg shadow-2xl z-40 border border-gray-700">
+      {(isOpen || isMobile) && (
+        <div className={`${
+          isMobile
+            ? 'fixed inset-0 bg-gray-900/95 z-50' // Full screen on mobile
+            : 'fixed top-[300px] right-[620px] w-[900px]'
+        } bg-gray-800 rounded-lg shadow-2xl ${!isMobile && 'z-40'} border border-gray-700`}>
           {/* Terminal Header */}
           <div className="flex items-center justify-between p-2 border-b border-gray-700">
             <div className="flex items-center gap-2">
@@ -204,8 +213,8 @@ Type 'help' for available commands`;
                 {mode.toUpperCase()} MODE
               </span>
             </div>
-            <button 
-              onClick={() => setIsOpen(false)}
+            <button
+              onClick={() => isMobile ? setIsOpen(false) : setIsOpen(false)}
               className="p-1 hover:bg-gray-700 rounded transition-colors"
             >
               <X className="w-4 h-4 text-gray-400" />
@@ -217,16 +226,13 @@ Type 'help' for available commands`;
             ref={terminalRef}
             tabIndex={0}
             onKeyDown={handleKeyDown}
-            className="font-mono bg-gray-900 p-4 rounded-b-lg text-green-400 h-[400px] overflow-y-auto focus:outline-none"
+            className={`font-mono bg-gray-900 p-4 rounded-b-lg text-green-400 overflow-y-auto focus:outline-none
+              ${isMobile ? 'h-[calc(100vh-64px)]' : 'h-[400px]'}`} // Adjust height for mobile
           >
-            {/* <div className="mb-2 text-gray-400">
-              Welcome to Terminal! Type 'help' for available commands.
-              Press 'i' for insert mode, 'Esc' for normal mode.
-            </div> */}
-            {<div className="mb-2 text-gray-400">
+            <div className="mb-2 text-gray-400">
               Welcome to Terminal! Type &apos;help&apos; for available commands.
               Press &apos;i&apos; for insert mode, &apos;Esc&apos; for normal mode.
-            </div>}
+            </div>
 
             {lines.map((line, i) => (
               <div key={i} className="flex">
@@ -251,6 +257,10 @@ Type 'help' for available commands`;
       )}
     </>
   );
+};
+
+TerminalEmulator.propTypes = {
+  isMobile: PropTypes.bool
 };
 
 export default TerminalEmulator;
