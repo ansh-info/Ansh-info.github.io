@@ -8,8 +8,9 @@ import {
   RefreshCw,
   BookOpen
 } from 'lucide-react';
+import PropTypes from 'prop-types';
 
-const JupyterNotebook = () => {
+const JupyterNotebook = ({ isMobile = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [cells, setCells] = useState([
     {
@@ -71,37 +72,41 @@ const JupyterNotebook = () => {
 
   return (
     <>
-      {/* Jupyter Button */}
-      <div className="fixed top-[400px] right-4 z-50 flex flex-col items-end gap-2">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="group bg-gray-800/90 p-4 rounded-xl hover:bg-gray-700 transition-all duration-200 
-            backdrop-blur-sm border border-gray-700/50 shadow-lg hover:scale-105 cursor-pointer"
-        >
-          <div className="flex items-center gap-3">
-            <FileCode className="w-8 h-8 text-orange-400 group-hover:text-orange-300" />
-            <div className="flex items-center gap-2">
-              <span className="text-green-400 font-mono text-sm">$</span>
-              <span className="text-gray-400 font-mono text-sm">Jupyter Notebook</span>
+      {/* Jupyter Button - Only show on desktop */}
+      {!isMobile && (
+        <div className="fixed top-[400px] right-4 z-50 flex flex-col items-end gap-2">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="group bg-gray-800/90 p-4 rounded-xl hover:bg-gray-700 transition-all duration-200 
+              backdrop-blur-sm border border-gray-700/50 shadow-lg hover:scale-105 cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <FileCode className="w-8 h-8 text-orange-400 group-hover:text-orange-300" />
+              <div className="flex items-center gap-2">
+                <span className="text-green-400 font-mono text-sm">$</span>
+                <span className="text-gray-400 font-mono text-sm">Jupyter Notebook</span>
+              </div>
             </div>
+          </button>
+          
+          <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[300px] 
+            truncate border border-gray-700/50 flex items-center gap-2"
+          >
+            <span className="text-green-400">$</span>
+            <span className="text-gray-400">Run All Cells</span>
           </div>
-        </button>
-        
-        <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[300px] 
-          truncate border border-gray-700/50 flex items-center gap-2"
-        >
-          <span className="text-green-400">$</span>
-          <span className="text-gray-400">Run All Cells</span>
         </div>
-      </div>
+      )}
 
       {/* Jupyter Notebook Interface */}
-      {isOpen && (
-        <div className="fixed top-[300px] right-[580px] w-[1000px] h-[650px] bg-gray-800 rounded-lg shadow-2xl z-40 
-          border border-gray-700 transform transition-all duration-200"
-        >
+      {(isOpen || isMobile) && (
+        <div className={`${
+          isMobile
+            ? 'fixed inset-0 bg-gray-900/95 z-50'
+            : 'fixed top-[300px] right-[580px] w-[1000px] h-[650px]'
+        } bg-gray-800 rounded-lg shadow-2xl border border-gray-700 flex flex-col`}>
           {/* Header */}
-          <div className="flex items-center justify-between p-2 border-b border-gray-700">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between p-2 border-b border-gray-700 gap-2">
             <div className="flex items-center gap-2">
               <FileCode className="w-5 h-5 text-orange-400" />
               <h2 className="text-sm font-semibold text-white">Jupyter Notebook</h2>
@@ -116,7 +121,7 @@ const JupyterNotebook = () => {
                 {kernelStatus === 'idle' ? '● Idle' : '● Running'}
               </span>
               <button 
-                onClick={() => setIsOpen(false)}
+                onClick={() => isMobile ? setIsOpen(false) : setIsOpen(false)}
                 className="p-1 hover:bg-gray-700 rounded transition-colors"
               >
                 <X className="w-4 h-4 text-gray-400" />
@@ -124,37 +129,39 @@ const JupyterNotebook = () => {
             </div>
           </div>
 
-          {/* Toolbar */}
-          <div className="flex items-center gap-2 p-2 border-b border-gray-700">
+          {/* Toolbar - Scrollable on mobile */}
+          <div className="flex items-center gap-2 p-2 border-b border-gray-700 overflow-x-auto">
             <button
               onClick={() => addCell('code')}
-              className="px-2 py-1 text-xs text-gray-300 hover:bg-gray-700 rounded flex items-center gap-1"
+              className="px-2 py-1 text-xs text-gray-300 hover:bg-gray-700 rounded flex items-center gap-1 whitespace-nowrap"
             >
               <Plus className="w-4 h-4" />
               Code
             </button>
             <button
               onClick={() => addCell('markdown')}
-              className="px-2 py-1 text-xs text-gray-300 hover:bg-gray-700 rounded flex items-center gap-1"
+              className="px-2 py-1 text-xs text-gray-300 hover:bg-gray-700 rounded flex items-center gap-1 whitespace-nowrap"
             >
               <BookOpen className="w-4 h-4" />
               Markdown
             </button>
-            <button className="px-2 py-1 text-xs text-gray-300 hover:bg-gray-700 rounded flex items-center gap-1">
+            <button className="px-2 py-1 text-xs text-gray-300 hover:bg-gray-700 rounded flex items-center gap-1 whitespace-nowrap">
               <Save className="w-4 h-4" />
               Save
             </button>
             <button
               onClick={() => setKernelStatus(s => s === 'idle' ? 'busy' : 'idle')}
-              className="px-2 py-1 text-xs text-gray-300 hover:bg-gray-700 rounded flex items-center gap-1"
+              className="px-2 py-1 text-xs text-gray-300 hover:bg-gray-700 rounded flex items-center gap-1 whitespace-nowrap"
             >
               <RefreshCw className="w-4 h-4" />
               Restart Kernel
             </button>
           </div>
 
-          {/* Notebook Cells */}
-          <div className="p-4 space-y-4 max-h-[500px] overflow-y-auto">
+          {/* Notebook Cells - Adjust height for mobile */}
+          <div className={`p-4 space-y-4 overflow-y-auto ${
+            isMobile ? 'h-[calc(100vh-180px)]' : 'max-h-[500px]'
+          }`}>
             {cells.map((cell) => (
               <div 
                 key={cell.id}
@@ -168,9 +175,9 @@ const JupyterNotebook = () => {
                   <div className="bg-gray-700/50 px-2 py-1 rounded-tl-lg text-xs text-gray-400 font-mono">
                     In [{cell.id}]:
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0"> {/* Added min-width to prevent overflow */}
                     <div className="bg-gray-700/30 p-3 font-mono text-sm text-white">
-                      <pre className="whitespace-pre-wrap">{cell.content}</pre>
+                      <pre className="whitespace-pre-wrap break-words">{cell.content}</pre>
                     </div>
                     {cell.type === 'code' && (
                       <div className="flex justify-end p-1">
@@ -192,7 +199,7 @@ const JupyterNotebook = () => {
                     <div className="bg-gray-700/50 px-2 py-1 rounded-tl-lg text-xs text-gray-400 font-mono">
                       Out [{cell.id}]:
                     </div>
-                    <div className="flex-1 bg-gray-700/30 p-3 font-mono text-sm text-green-400">
+                    <div className="flex-1 bg-gray-700/30 p-3 font-mono text-sm text-green-400 break-words">
                       {cell.output}
                     </div>
                   </div>
@@ -202,7 +209,7 @@ const JupyterNotebook = () => {
           </div>
 
           {/* Status Bar */}
-          <div className="p-2 border-t border-gray-700 flex justify-between items-center text-xs text-gray-400">
+          <div className="p-2 border-t border-gray-700 flex flex-wrap justify-between items-center gap-2 text-xs text-gray-400">
             <div>Python 3.9 | Powered by Coffee</div>
             <div>Memory Usage: Over 9000 MB</div>
           </div>
@@ -210,6 +217,10 @@ const JupyterNotebook = () => {
       )}
     </>
   );
+};
+
+JupyterNotebook.propTypes = {
+  isMobile: PropTypes.bool
 };
 
 export default JupyterNotebook;
