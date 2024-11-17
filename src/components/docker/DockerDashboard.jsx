@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { 
   Box, 
   Container, 
@@ -13,7 +14,7 @@ import {
   Network
 } from 'lucide-react';
 
-const DockerDashboard = () => {
+const DockerDashboard = ({ isMobile = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [containers, setContainers] = useState([
     {
@@ -162,46 +163,51 @@ const DockerDashboard = () => {
 
   return (
     <>
-      {/* Docker Toggle Button */}
-      <div className="fixed top-[200px] right-4 z-50 flex flex-col items-end gap-2">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="group bg-gray-800/90 p-4 rounded-xl hover:bg-gray-700 transition-all duration-200 
-            backdrop-blur-sm border border-gray-700/50 shadow-lg hover:scale-105 cursor-pointer"
-        >
-          <div className="flex items-center gap-3">
-            <Container className="w-8 h-8 text-blue-400 group-hover:text-blue-300" />
-            <div className="flex items-center gap-2">
-              <span className="text-green-400 font-mono text-sm">$</span>
-              <span className="text-gray-400 font-mono text-sm">Docker</span>
+      {/* Docker Toggle Button - Only show on desktop */}
+      {!isMobile && (
+        <div className="fixed top-[200px] right-4 z-50 flex flex-col items-end gap-2">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="group bg-gray-800/90 p-4 rounded-xl hover:bg-gray-700 transition-all duration-200 
+              backdrop-blur-sm border border-gray-700/50 shadow-lg hover:scale-105 cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <Container className="w-8 h-8 text-blue-400 group-hover:text-blue-300" />
+              <div className="flex items-center gap-2">
+                <span className="text-green-400 font-mono text-sm">$</span>
+                <span className="text-gray-400 font-mono text-sm">Docker</span>
+              </div>
             </div>
+          </button>
+          
+          <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[300px] 
+            truncate border border-gray-700/50 flex items-center gap-2"
+          >
+            <span className="text-green-400">$</span>
+            <span className="text-gray-400">docker pull - click to start</span>
           </div>
-        </button>
-        
-        <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[300px] 
-          truncate border border-gray-700/50 flex items-center gap-2"
-        >
-          <span className="text-green-400">$</span>
-          <span className="text-gray-400">docker pull - click to start</span>
         </div>
-      </div>
+      )}
 
       {/* Docker Dashboard */}
-      {isOpen && (
-        <div className="fixed top-[300px] right-[600px] w-[900px] h-[650px] bg-gray-800 rounded-lg shadow-2xl z-40 
-          border border-gray-700 transform transition-all duration-200"
+      {(isOpen || isMobile) && (
+        <div className={`${
+          isMobile
+            ? 'fixed inset-0 bg-gray-900/95 z-50'
+            : 'fixed top-[300px] right-[600px] w-[900px] h-[650px]'
+        } bg-gray-800 rounded-lg shadow-2xl border border-gray-700 flex flex-col overflow-hidden`}
         >
           {/* Header */}
           <div className="flex items-center justify-between p-2 border-b border-gray-700">
             <div className="flex items-center gap-2">
               <Container className="w-5 h-5 text-blue-400" />
               <h2 className="text-sm font-semibold text-white">Docker Dashboard</h2>
-              <span className="text-xs text-gray-400 px-2 py-1 bg-gray-700 rounded">
+              <span className="text-xs text-gray-400 px-2 py-1 bg-gray-700 rounded hidden sm:inline-block">
                 v20.10.69-sarcasm
               </span>
             </div>
             <button 
-              onClick={() => setIsOpen(false)}
+              onClick={() => isMobile ? setIsOpen(false) : setIsOpen(false)}
               className="p-1 hover:bg-gray-700 rounded transition-colors"
             >
               <X className="w-4 h-4 text-gray-400" />
@@ -209,65 +215,38 @@ const DockerDashboard = () => {
           </div>
 
           {/* System Stats */}
-          <div className="grid grid-cols-4 gap-2 p-4 border-b border-gray-700">
-            <div className="bg-gray-700/50 p-2 rounded-lg">
-              <div className="flex items-center gap-2 text-xs text-gray-300 mb-1">
-                <Cpu className="w-4 h-4" />
-                CPU
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-4 border-b border-gray-700">
+            {[
+              { icon: <Cpu className="w-4 h-4" />, label: 'CPU', value: systemStats.cpuUsage, color: 'bg-blue-400' },
+              { icon: <HardDrive className="w-4 h-4" />, label: 'Memory', value: systemStats.memoryUsage, color: 'bg-purple-400' },
+              { icon: <Network className="w-4 h-4" />, label: 'Network', value: systemStats.networkUsage, color: 'bg-green-400' },
+              { icon: <Coffee className="w-4 h-4" />, label: 'Coffee', value: systemStats.coffeeLevel, color: 'bg-yellow-400' }
+            ].map((stat, index) => (
+              <div key={index} className="bg-gray-700/50 p-2 rounded-lg">
+                <div className="flex items-center gap-2 text-xs text-gray-300 mb-1">
+                  {stat.icon}
+                  {stat.label}
+                </div>
+                <div className="w-full h-1.5 bg-gray-600 rounded-full">
+                  <div 
+                    className={`h-full ${stat.color} rounded-full transition-all`}
+                    style={{ width: `${stat.value}%` }}
+                  />
+                </div>
               </div>
-              <div className="w-full h-1.5 bg-gray-600 rounded-full">
-                <div 
-                  className="h-full bg-blue-400 rounded-full transition-all"
-                  style={{ width: `${systemStats.cpuUsage}%` }}
-                />
-              </div>
-            </div>
-            <div className="bg-gray-700/50 p-2 rounded-lg">
-              <div className="flex items-center gap-2 text-xs text-gray-300 mb-1">
-                <HardDrive className="w-4 h-4" />
-                Memory
-              </div>
-              <div className="w-full h-1.5 bg-gray-600 rounded-full">
-                <div 
-                  className="h-full bg-purple-400 rounded-full transition-all"
-                  style={{ width: `${systemStats.memoryUsage}%` }}
-                />
-              </div>
-            </div>
-            <div className="bg-gray-700/50 p-2 rounded-lg">
-              <div className="flex items-center gap-2 text-xs text-gray-300 mb-1">
-                <Network className="w-4 h-4" />
-                Network
-              </div>
-              <div className="w-full h-1.5 bg-gray-600 rounded-full">
-                <div 
-                  className="h-full bg-green-400 rounded-full transition-all"
-                  style={{ width: `${systemStats.networkUsage}%` }}
-                />
-              </div>
-            </div>
-            <div className="bg-gray-700/50 p-2 rounded-lg">
-              <div className="flex items-center gap-2 text-xs text-gray-300 mb-1">
-                <Coffee className="w-4 h-4" />
-                Coffee
-              </div>
-              <div className="w-full h-1.5 bg-gray-600 rounded-full">
-                <div 
-                  className="h-full bg-yellow-400 rounded-full transition-all"
-                  style={{ width: `${systemStats.coffeeLevel}%` }}
-                />
-              </div>
-            </div>
+            ))}
           </div>
 
-          {/* Container List */}
-          <div className="p-4 space-y-3 max-h-[300px] overflow-y-auto">
+          {/* Container List - Scrollable container */}
+          <div className={`p-4 space-y-3 overflow-y-auto ${
+            isMobile ? 'h-[calc(100vh-400px)]' : 'max-h-[300px]'
+          }`}>
             {containers.map((container) => (
               <div 
                 key={container.id}
                 className="bg-gray-700/50 rounded-lg p-3 hover:bg-gray-700/70 transition-all"
               >
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
                   <div className="flex items-center gap-2">
                     <Box className="w-4 h-4 text-blue-400" />
                     <span className="font-medium text-white">{container.name}</span>
@@ -278,7 +257,7 @@ const DockerDashboard = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => toggleContainer(container.id)}
-                      className="p-1 hover:bg-gray-600 rounded transition-colors"
+                      className="p-2 hover:bg-gray-600 rounded transition-colors" // Increased touch target
                     >
                       {container.status === 'running' ? (
                         <Square className="w-4 h-4 text-red-400" />
@@ -288,14 +267,14 @@ const DockerDashboard = () => {
                     </button>
                     <button
                       onClick={() => restartContainer(container.id)}
-                      className="p-1 hover:bg-gray-600 rounded transition-colors"
+                      className="p-2 hover:bg-gray-600 rounded transition-colors" // Increased touch target
                     >
                       <RefreshCw className="w-4 h-4 text-yellow-400" />
                     </button>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-xs text-gray-300">
-                  <div>Image: {container.image}</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-300">
+                  <div className="truncate">Image: {container.image}</div>
                   <div>Uptime: {container.uptime}</div>
                   <div>Memory: {container.memory}</div>
                   <div>CPU: {container.cpu}</div>
@@ -312,7 +291,7 @@ const DockerDashboard = () => {
               <AlertCircle className="w-4 h-4 text-yellow-400" />
               <span className="text-sm text-white">System Logs</span>
             </div>
-            <div className="bg-gray-900/50 rounded-lg p-2 font-mono text-xs space-y-1 max-h-[150px] overflow-y-auto">
+            <div className="bg-gray-900/50 rounded-lg p-2 font-mono text-xs space-y-1 max-h-[100px] sm:max-h-[150px] overflow-y-auto">
               {logs.map((log, index) => (
                 <div 
                   key={index}
@@ -320,7 +299,7 @@ const DockerDashboard = () => {
                     log.includes('[ERROR]') ? 'text-red-400' :
                     log.includes('[WARN]') ? 'text-yellow-400' :
                     'text-green-400'
-                  }`}
+                  } break-words`}
                 >
                   {log}
                 </div>
@@ -331,6 +310,10 @@ const DockerDashboard = () => {
       )}
     </>
   );
+};
+
+DockerDashboard.propTypes = {
+  isMobile: PropTypes.bool
 };
 
 export default DockerDashboard;

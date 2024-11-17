@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { 
   Bot, 
   Send, 
@@ -9,7 +10,7 @@ import {
   Loader
 } from 'lucide-react';
 
-const AIAssistant = () => {
+const AIAssistant = ({ isMobile = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -128,34 +129,39 @@ def optimize_productivity(coffee_level, bugs_count):
 
   return (
     <>
-      {/* AI Assistant Button */}
-      <div className="fixed top-[800px] right-4 z-50 flex flex-col items-end gap-2">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="group bg-gray-800/90 p-4 rounded-xl hover:bg-gray-700 transition-all duration-200 
-            backdrop-blur-sm border border-gray-700/50 shadow-lg hover:scale-105 cursor-pointer"
-        >
-          <div className="flex items-center gap-3">
-            <Bot className="w-8 h-8 text-purple-400 group-hover:text-purple-300" />
-            <div className="flex items-center gap-2">
-              <span className="text-green-400 font-mono text-sm">$</span>
-              <span className="text-gray-400 font-mono text-sm">ChatGPT</span>
+      {/* AI Assistant Button - Only show on desktop */}
+      {!isMobile && (
+        <div className="fixed top-[800px] right-4 z-50 flex flex-col items-end gap-2">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="group bg-gray-800/90 p-4 rounded-xl hover:bg-gray-700 transition-all duration-200 
+              backdrop-blur-sm border border-gray-700/50 shadow-lg hover:scale-105 cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <Bot className="w-8 h-8 text-purple-400 group-hover:text-purple-300" />
+              <div className="flex items-center gap-2">
+                <span className="text-green-400 font-mono text-sm">$</span>
+                <span className="text-gray-400 font-mono text-sm">ChatGPT</span>
+              </div>
             </div>
+          </button>
+          
+          <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[300px] 
+            truncate border border-gray-700/50 flex items-center gap-2"
+          >
+            <span className="text-green-400">$</span>
+            <span className="text-gray-400">How Can I Help You Today?</span>
           </div>
-        </button>
-        
-        <div className="bg-gray-800/80 backdrop-blur-sm p-2 rounded-lg text-xs font-mono max-w-[300px] 
-          truncate border border-gray-700/50 flex items-center gap-2"
-        >
-          <span className="text-green-400">$</span>
-          <span className="text-gray-400">How Can I Help You Today?</span>
         </div>
-      </div>
+      )}
 
       {/* Chat Interface */}
-      {isOpen && (
-        <div className="fixed top-[300px] right-[800px] w-[600px] h-[650px] bg-gray-800 rounded-lg shadow-2xl z-40 
-          border border-gray-700 flex flex-col overflow-hidden"
+      {(isOpen || isMobile) && (
+        <div className={`${
+          isMobile
+            ? 'fixed inset-0 bg-gray-900/95 z-50'
+            : 'fixed top-[300px] right-[800px] w-[600px] h-[650px]'
+        } bg-gray-800 rounded-lg shadow-2xl border border-gray-700 flex flex-col overflow-hidden`}
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-700">
@@ -167,7 +173,7 @@ def optimize_productivity(coffee_level, bugs_count):
               </span>
             </div>
             <button 
-              onClick={() => setIsOpen(false)}
+              onClick={() => isMobile ? setIsOpen(false) : setIsOpen(false)}
               className="p-1 hover:bg-gray-700 rounded transition-colors"
             >
               <X className="w-4 h-4 text-gray-400" />
@@ -175,14 +181,16 @@ def optimize_productivity(coffee_level, bugs_count):
           </div>
 
           {/* Chat Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${
+            isMobile ? 'pb-24' : '' // Extra padding for mobile keyboard
+          }`}>
             {messages.map((message, index) => (
               <div
                 key={index}
                 className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {message.type === 'bot' && (
-                  <div className="w-8 h-8 rounded-full bg-purple-400/20 flex items-center justify-center mr-2">
+                  <div className="w-8 h-8 rounded-full bg-purple-400/20 flex items-center justify-center mr-2 shrink-0">
                     <Bot className="w-4 h-4 text-purple-400" />
                   </div>
                 )}
@@ -201,7 +209,9 @@ def optimize_productivity(coffee_level, bugs_count):
                     <>
                       <button
                         onClick={() => handleCopy(message.content, index)}
-                        className="absolute top-2 right-2 p-1 bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                        className={`absolute top-2 right-2 p-1 bg-gray-800 rounded ${
+                          isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                        } transition-opacity`}
                       >
                         {copiedIndex === index ? (
                           <Check className="w-4 h-4 text-green-400" />
@@ -209,17 +219,17 @@ def optimize_productivity(coffee_level, bugs_count):
                           <Copy className="w-4 h-4 text-gray-400" />
                         )}
                       </button>
-                      <pre className="text-sm text-green-400 overflow-x-auto">
+                      <pre className="text-sm text-green-400 overflow-x-auto whitespace-pre-wrap break-words">
                         <code>{message.content}</code>
                       </pre>
                     </>
                   ) : (
-                    <div className="text-sm">{message.content}</div>
+                    <div className="text-sm break-words">{message.content}</div>
                   )}
                 </div>
 
                 {message.type === 'user' && (
-                  <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center ml-2">
+                  <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center ml-2 shrink-0">
                     <Brain className="w-4 h-4 text-blue-400" />
                   </div>
                 )}
@@ -235,7 +245,9 @@ def optimize_productivity(coffee_level, bugs_count):
           </div>
 
           {/* Input Area */}
-          <div className="p-4 border-t border-gray-700">
+          <div className={`p-4 border-t border-gray-700 ${
+            isMobile ? 'fixed bottom-0 left-0 right-0 bg-gray-800' : ''
+          }`}>
             <div className="flex items-center gap-2">
               <input
                 type="text"
@@ -258,6 +270,10 @@ def optimize_productivity(coffee_level, bugs_count):
       )}
     </>
   );
+};
+
+AIAssistant.propTypes = {
+  isMobile: PropTypes.bool
 };
 
 export default AIAssistant;
