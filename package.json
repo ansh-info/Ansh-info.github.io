@@ -13,7 +13,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "lucide-react": "^0.454.0",
+    "lucide-react": "^0.460.0",
     "plotly.js": "^2.35.2",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
